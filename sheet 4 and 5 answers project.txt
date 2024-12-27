@@ -1,0 +1,54 @@
+use suvish;
+alter table country_state modify loan_id varchar(50);
+describe country_state;
+select * from country_state;
+-- Sheet 4 and 5- country state and region
+-- *Import the table 
+
+
+-- *Join all the 5 tables without repeating the fields - output 1 
+select c.Loan_id,c.Customer_ID,c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,
+l.LoanAmount,l.Loan_Amount_Term,l.Cibil_Score,
+i.Customer_name,i.Gender,i.Age,i.Married,i.Education,i.Self_Employed,i.Region_id,
+s.Postal_Code,s.Segment,s.State,
+r.Region from customer_income_status c inner join (loan_status_imported l, customer_info i,country_state s) on 
+(c.customer_id,c.customer_id,c.customer_id)=(l.customer_id,i.customer_id,s.Customer_id) inner join region_info r on s.region_id=r.region_id;
+
+    
+
+-- *find the mismatch details using joins - output 2
+
+select c.Loan_id,c.Customer_ID,c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,
+l.LoanAmount,l.Loan_Amount_Term,l.Cibil_Score,
+i.Customer_name,i.Gender,i.Age,i.Married,i.Education,i.Self_Employed,i.Region_id,
+s.Postal_Code,s.Segment,s.State,
+r.Region from customer_income_status c left join (loan_status_imported l, customer_info i,country_state s) on 
+(c.customer_id,c.customer_id,c.customer_id)=(l.customer_id,i.customer_id,s.Customer_id) left join region_info r on s.region_id=r.region_id ;
+
+
+
+
+-- * Filter high cibil score - output 3
+select c.Loan_id,c.Customer_ID,c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,
+l.LoanAmount,l.Loan_Amount_Term,l.Cibil_Score,
+i.Customer_name,i.Gender,i.Age,i.Married,i.Education,i.Self_Employed,i.Region_id,
+s.Postal_Code,s.Segment,s.State,
+r.Region from customer_income_status c inner join (loan_status_imported l, customer_info i,country_state s) on 
+(c.customer_id,c.customer_id,c.customer_id)=(l.customer_id,i.customer_id,s.Customer_id) inner join region_info r on s.region_id=r.region_id
+ order by cibil_score desc limit 1;
+
+-- * Filter home office and corporate - output 4
+
+select c.Loan_id,c.Customer_ID,c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,
+l.LoanAmount,l.Loan_Amount_Term,l.Cibil_Score,
+i.Customer_name,i.Gender,i.Age,i.Married,i.Education,i.Self_Employed,i.Region_id,
+s.Postal_Code,s.Segment,s.State,
+r.Region from customer_income_status c inner join (loan_status_imported l, customer_info i,country_state s) on 
+(c.customer_id,c.customer_id,c.customer_id)=(l.customer_id,i.customer_id,s.Customer_id) inner join region_info r on s.region_id=r.region_id
+ where s.segment in ("home office", "corporate");
+ 
+ -- *Store all the outputs as procedure
+ 
+ 
+
+

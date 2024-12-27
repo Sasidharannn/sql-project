@@ -1,0 +1,16 @@
+use suvish;
+-- •	Import table from sheet 1- customer income status
+SELECT * FROM suvish.customer_income_status;
+alter table customer_income_status modify loan_id varchar(50);
+-- 	set customer criteria based on applicant income
+    -- Criteria
+       -- •	Applicant income >15,000 = grade a
+	   -- •	Applicant income >9,000 = grade b
+       -- •	Applicant income >5000 = middle class customer
+	   -- •	Otherwise low class
+select * ,
+case when applicantincome>15000 then "a grade"
+when applicantincome>9000  then "b grade"
+when applicantincome>5000  then "middle class customer"
+else "low class"
+end as results from customer_income_status;

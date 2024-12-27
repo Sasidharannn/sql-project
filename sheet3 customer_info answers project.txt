@@ -1,0 +1,25 @@
+sheet-3 customer_info
+-------------------------
+use suvish;
+
+-- Import the table
+SELECT * FROM suvish.customer_info;
+
+-- Update age based on customer id 
+
+update customer_info set age=45 where customer_id='ip43007';
+update customer_info set age=32 where customer_id='ip43009';
+select customer_id,age from customer_info where customer_id in( 'ip43007', 'ip43009');
+
+--  Update gender based on customer id 
+
+update customer_info set gender="female" where customer_id='ip43006';
+update customer_info set gender="female" where customer_id='ip43016';
+update customer_info set gender="male" where customer_id='ip43018';
+update customer_info set gender="male" where customer_id='ip43038';
+update customer_info set gender="female" where customer_id='ip43508';
+update customer_info set gender="female" where customer_id='ip43577';
+update customer_info set gender="female" where customer_id='ip43589';
+update customer_info set gender="female" where customer_id='ip43593';
+select customer_id,gender from customer_info where customer_id in( 'IP43006','IP43016','IP43018','IP43038','IP43508','IP43577','IP43589','IP43593');
+

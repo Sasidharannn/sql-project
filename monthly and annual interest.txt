@@ -1,0 +1,54 @@
+SELECT * FROM suvish.loan_status_imported;
+alter table loan_status_imported modify loan_id varchar(50);
+
+
+-- Monthly interest percentage 
+-- Criteria
+-- •	Applicant income <5000 rural=3%
+-- •	Applicant income <5000 semi rural=3.5%
+-- •	Applicant income <5000 urban=5%
+-- •	Applicant income <5000 semi urban= 2.5%
+-- •	Otherwise =7%
+-- New field creation based on interest
+-- •	Calculate monthly interest amt and annual interest amt based on loan amt
+-- •	Create all the above fields as a table 
+-- •	Table name - customer interest analysis(create this into a new table and connect with sheet 2 (loan status) bring the output)
+
+select * , concat(((loanamount))*0.03,'%') as monthly_interest from loan_status_imported ; 
+select * , concat(((loanamount*0.03*30)),'%') as monthly_interest from loan_status_imported;
+
+-- monthly interest
+select c.Loan_ID,c.Customer_ID,	c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,l.loanamount,l.loan_amount_term,l.cibil_score,
+ case
+when c.applicantincome<5000 and c.Property_Area="rural" then concat(((loanamount))*0.03) 
+ when c.applicantincome<5000 and c.Property_Area="semirural" then concat(((loanamount))*0.035) 
+when c.applicantincome<5000 and c.Property_Area="urban" then concat(((loanamount))*0.05) 
+when c.applicantincome<5000 and c.Property_Area="semiurban" then concat(((loanamount))*0.025) end as monthly_interest
+
+from customer_income_status c join loan_status_imported l on c.loan_id=l.loan_id;
+
+-- annual interest
+select c.Loan_ID,c.Customer_ID,	c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,l.loanamount,l.loan_amount_term,l.cibil_score,
+ case
+when c.applicantincome<5000 and c.Property_Area="rural" then ((loanamount)*0.03)*12 
+ when c.applicantincome<5000 and c.Property_Area="semirural" then ((loanamount)*0.035)*12
+when c.applicantincome<5000 and c.Property_Area="urban" then ((loanamount)*0.05)*12 
+when c.applicantincome<5000 and c.Property_Area="semiurban" then ((loanamount)*0.025)*12 end as annual_interest
+
+from customer_income_status c join loan_status_imported l on c.loan_id=l.loan_id;
+
+-- 
+-- •	Table name - customer interest analysis(create this into a new table and connect with sheet 2 (loan status) bring the output)
+select c.Loan_ID,c.Customer_ID,	c.ApplicantIncome,c.CoapplicantIncome,c.Property_Area,c.Loan_Status,l.loanamount,l.loan_amount_term,l.cibil_score,
+ 
+ case
+when c.applicantincome<5000 and c.Property_Area="rural" then concat(((loanamount))*0.03) 
+ when c.applicantincome<5000 and c.Property_Area="semirural" then concat(((loanamount))*0.035) 
+when c.applicantincome<5000 and c.Property_Area="urban" then concat(((loanamount))*0.05) 
+when c.applicantincome<5000 and c.Property_Area="semiurban" then concat(((loanamount))*0.025) end as monthly_interest,
+case
+when c.applicantincome<5000 and c.Property_Area="rural" then ((loanamount)*0.03)*12 
+ when c.applicantincome<5000 and c.Property_Area="semirural" then ((loanamount)*0.035)*12
+when c.applicantincome<5000 and c.Property_Area="urban" then ((loanamount)*0.05)*12 
+when c.applicantincome<5000 and c.Property_Area="semiurban" then ((loanamount)*0.025)*12 end as annual_interest
+from customer_income_status c join loan_status_imported l on c.loan_id=l.loan_id ;

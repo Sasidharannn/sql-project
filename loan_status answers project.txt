@@ -1,0 +1,81 @@
+-------------------------------------------------------
+-- Sheet 2 - loan status
+  --  •	Create row level trigger for loan amt 
+-- Criteria
+-- •	Loan amt null = loan still processing
+---------------------------------------------------------
+create table loan_status(Loan_ID  varchar(50),Customer_id text ,LoanAmount varchar(50),Loan_Amount_Term int,Cibil_Score int,primary key(loan_id));                                                                                 
+
+
+select * from loan_status;
+describe loan_status;
+
+
+show triggers;
+
+delimiter !!
+create trigger loan_update before insert on loan_status for each row
+begin
+if new.loanamount is null then set new.loanamount="loan still processing";
+end if;
+end!!
+delimiter ;
+
+---------------------------------------------------------------
+
+ -- •	Create statement level trigger for cibil score
+-- Criteria 
+-- •	Cibil score >900 high cibil score
+-- •	Cibil score >750 no penalty
+-- •	Cibil score >250 penalty customers
+-- •	Cibil score <=0 reject customers (loan cannot apply)
+----------------------------------------------------------------
+create table loan_cibil_score_status_details(Loan_id varchar(50),Loanamount varchar(50),Cibil_Score int, Cibil_Score_status varchar(100));
+
+select * from  loan_cibil_score_status_details;
+
+delimiter $$
+create trigger loan_update2 after insert on loan_status for each row
+begin
+if new.cibil_score>900 then insert into loan_cibil_score_status_details(loan_id,loanamount,cibil_score,cibil_score_status)
+ values (new.loan_id,new.loanamount,new.cibil_score,"high_cibil_score");
+ elseif new.cibil_score>750 then insert into loan_cibil_score_status_details(loan_id,loanamount,cibil_score,cibil_score_status)
+ values (new.loan_id,new.loanamount,new.cibil_score,"No_Penalty");
+ elseif new.cibil_score>250 then insert into loan_cibil_score_status_details(loan_id,loanamount,cibil_score,cibil_score_status)
+ values (new.loan_id,new.loanamount,new.cibil_score,"Penalty_customers");
+elseif new.cibil_score<=0 then insert into loan_cibil_score_status_details(loan_id,loanamount,cibil_score,cibil_score_status)
+ values (new.loan_id,new.loanamount,new.cibil_score,cibil_score_status,"rejected_customers");
+end if;
+end $$
+delimiter ;
+
+show triggers;
+
+truncate table loan_status;
+drop trigger loan_update2;
+
+insert into loan_status values
+('LP001002','IP43001',Null,360,303),
+('LP001003','IP43002',128,360,920),
+('LP001005','IP43003',66,360,606),
+('LP001006','IP43004',120,360,851),
+('LP001008', 'IP43005',141,360,420),
+('LP001011'	,'IP43006',267,360,173),
+('LP001013'	,'IP43007',	95,	360,650),
+('LP001014'	,'IP43008',	158	,360,471);
+
+
+
+select * from loan_status;
+describe loan_status;
+select * from  loan_cibil_score_status_details;
+
+-- *Then delete the reject and loan still processing customers
+delete from loan_cibil_score_status_details where loanamount="loan still processing";
+-- *Update loan as integers
+alter table loan_cibil_score_status_details modify loanamount int;
+describe loan_cibil_score_status_details;
+
+-- *Create all the above fields as a table 
+-- *Table name - loan cibil score status details
+select * from  loan_cibil_score_status_details;
